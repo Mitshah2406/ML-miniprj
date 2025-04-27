@@ -196,7 +196,7 @@ y = df['Vehicles']
 
 # Assuming 'Date' is a column in the DataFrame
 # If not, you need to extract the date from the 'DateTime' column
-X['Date'] = df['Date']
+# X['Date'] = df['Date']
 
 # Train your model using the updated X with Date feature
 

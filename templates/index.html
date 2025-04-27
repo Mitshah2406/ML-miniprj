@@ -1,54 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-<style>  
-body {
-	background-image: url("{{ url_for('static', filename='images/bg.jpg') }}");
-
-
-}
-</style>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Traffic Flow Prediction</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding-top: 2rem;
+      }
+      .prediction-form {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
     <div class="container">
-        <h1>Vehicle Prediction</h1>
-        <form action="/predict" method="post">
-            <label for="junction">Junction Number (1, 2, 3, or 4):</label>
-            <input type="number" id="junction" name="junction" min="1" max="4" required>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="header">
+            <h1>Traffic Flow Prediction</h1>
+            <p class="lead">
+              Enter details to predict traffic flow at different junctions
+            </p>
+          </div>
 
-         
-            <label for="hour">Hour (0-23):</label>
-            <input type="number" id="hour" name="hour" min="0" max="23" required>
-            <div class="calendar-box" style="margin: 20px;">
-                <h2 class="calendar-title">Select a Date</h2>
-                <input type="text" id="dateInput" placeholder="Select a date">
-                <div class="calendar" id="calendar">
-                  <div class="header">
-                    <button id="prevBtn">&lt;</button>
-                    <h2 id="monthYear">Month Year</h2>
-                    <button id="nextBtn">&gt;</button>
-                  </div>
-                  <div class="days" id="daysContainer"></div>
-                </div>
+          <div class="prediction-form">
+            <form action="/predict" method="post">
+              <div class="form-group">
+                <label for="junction">Junction Number:</label>
+                <select
+                  class="form-control"
+                  id="junction"
+                  name="junction"
+                  required
+                >
+                  <option value="1">Junction 1</option>
+                  <option value="2">Junction 2</option>
+                  <option value="3">Junction 3</option>
+                  <option value="4">Junction 4</option>
+                </select>
               </div>
-              <label for="date">Date (1-31):</label>
-              <input type="number" id="date" name="date" min="1" max="31" required>
-  
-              <label for="month">Month (1-12):</label>
-              <input type="number" id="month" name="month" min="1" max="12" required>
-  
-              <label for="day">Day (1-7):</label>
-              <input type="number" id="day" name="day" min="1" max="7" required>
-  
-            <input type="submit" value="Predict">
-        </form>
-    </div>
-</body>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
+              <div class="form-group">
+                <label for="month">Month (1-12):</label>
+                <select class="form-control" id="month" name="month" required>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="day">Day (1-31):</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="day"
+                  name="day"
+                  min="1"
+                  max="31"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="hour">Hour (0-23):</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="hour"
+                  name="hour"
+                  min="0"
+                  max="23"
+                  required
+                />
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">
+                Predict Traffic
+              </button>
+            </form>
+          </div>
+
+          <div class="text-center">
+            <a href="/visualize" class="btn btn-outline-secondary"
+              >View Traffic Visualization</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

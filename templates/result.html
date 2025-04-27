@@ -3,44 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
-  
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Traffic Prediction Results</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-	background-image: url("{{ url_for('static', filename='images/bg.jpg') }}");
-
-
-}
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            background-color: #f8f9fa;
+            padding-top: 2rem;
         }
-        h1 {
-            text-align: center;
+        .result-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
-        p {
+        .header {
             text-align: center;
-            font-size: 1.2em;
-            margin-top: 20px;
+            margin-bottom: 2rem;
+        }
+        .prediction-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .recommendation {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        .graph-container {
+            margin-top: 2rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Result</h1>
-        <h2>Your Selection:</h2>
-        <p>Hour: {{ hour }}</p>
-        <p>Junction: {{ junction }}</p>
-        <p>Day: {{ day }}</p>
-        <p>Month: {{ month }}</p>
-        <p>Predicted Traffic: {{ prediction }}</p>
-
-        <h2>Traffic for Other Junctions:</h2>
-        {% for junction, traffic in other_junctions.items() %}
-            <p>{{ junction }}: {{ traffic }}</p>
-        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="header">
+                    <h1>Traffic Prediction Results</h1>
+                </div>
+                
+                <div class="result-container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="text-center">Your Request</h3>
+                            <p class="text-center">
+                                Junction: {{ requested_junction }} | 
+                                Month: {{ month }} | 
+                                Day: {{ day }} | 
+                                Hour: {{ hour }}
+                            </p>
+                            
+                            <h3 class="text-center mt-4">Predicted Number of Vehicles</h3>
+                            <div class="prediction-value">{{ prediction }}</div>
+                            
+                            <div class="recommendation">
+                                <h4>Recommendation</h4>
+                                <p>Based on our predictions, the best junction to take at this time is <strong>Junction {{ best_junction }}</strong> with approximately <strong>{{ all_junctions[best_junction] }}</strong> vehicles.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <h3>Traffic Comparison by Junction</h3>
+                        <img src="data:image/png;base64,{{ graph }}" alt="Traffic by Junction" class="img-fluid">
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4>All Junction Predictions:</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Junction</th>
+                                    <th>Predicted Vehicles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for junction, vehicles in all_junctions.items() %}
+                                <tr {% if junction == best_junction %}class="table-success"{% endif %}>
+                                    <td>Junction {{ junction }}</td>
+                                    <td>{{ vehicles }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="/" class="btn btn-primary">Make Another Prediction</a>
+                    <a href="/visualize" class="btn btn-outline-secondary ms-3">View Traffic Visualizations</a>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

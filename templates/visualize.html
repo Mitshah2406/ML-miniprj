@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Traffic Data Visualization</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding-top: 2rem;
+      }
+      .viz-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .graph-container {
+        margin-top: 2rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="header">
+            <h1>Traffic Data Visualization</h1>
+            <p class="lead">
+              Visualized traffic patterns based on historical data
+            </p>
+          </div>
+
+          <div class="viz-container">
+            {% if error %}
+            <div class="alert alert-warning">
+              <h4>Error Loading Data</h4>
+              <p>{{ error }}</p>
+              <p>
+                Please make sure the dataset file is available in the correct
+                location.
+              </p>
+            </div>
+            {% else %}
+            <div class="graph-container">
+              <h3>Average Hourly Traffic</h3>
+              <p class="text-muted">
+                This graph shows how traffic varies throughout the day
+              </p>
+              <img
+                src="data:image/png;base64,{{ hourly_graph }}"
+                alt="Hourly Traffic Graph"
+                class="img-fluid"
+              />
+            </div>
+
+            <div class="graph-container">
+              <h3>Average Traffic by Junction</h3>
+              <p class="text-muted">
+                This graph compares the average traffic at each junction
+              </p>
+              <img
+                src="data:image/png;base64,{{ junction_graph }}"
+                alt="Junction Traffic Graph"
+                class="img-fluid"
+              />
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="text-center">
+            <a href="/" class="btn btn-primary">Back to Prediction</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
