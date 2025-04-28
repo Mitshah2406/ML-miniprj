@@ -84,21 +84,36 @@ df['TimeOfDay'] = le.fit_transform(df['TimeOfDay'])
 df.head()
 
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
 X = df.drop(columns=['Vehicles'])
 y = df['Vehicles']
 
+# For Decision Tree feature importance
 dt = DecisionTreeRegressor(random_state=42)
 dt.fit(X, y)
-importances = dt.feature_importances_
-indices = np.argsort(importances)[::-1]
-names = [X.columns[i] for i in indices]
+dt_importances = dt.feature_importances_
+dt_indices = np.argsort(dt_importances)[::-1]
+dt_names = [X.columns[i] for i in dt_indices]
 
 plt.figure(figsize=(10, 6))
-plt.title("Feature Importance")
-plt.bar(range(X.shape[1]), importances[indices])
-plt.xticks(range(X.shape[1]), names, rotation=90)
+plt.title("Decision Tree Feature Importance")
+plt.bar(range(X.shape[1]), dt_importances[dt_indices])
+plt.xticks(range(X.shape[1]), dt_names, rotation=90)
+plt.show()
+
+# For Random Forest feature importance
+rf = RandomForestRegressor(n_estimators=100, random_state=42)
+rf.fit(X, y)
+rf_importances = rf.feature_importances_
+rf_indices = np.argsort(rf_importances)[::-1]
+rf_names = [X.columns[i] for i in rf_indices]
+
+plt.figure(figsize=(10, 6))
+plt.title("Random Forest Feature Importance")
+plt.bar(range(X.shape[1]), rf_importances[rf_indices])
+plt.xticks(range(X.shape[1]), rf_names, rotation=90)
 plt.show()
 
 df = df.drop('TimeOfDay',axis=1)
@@ -107,6 +122,7 @@ df
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 X = df.drop(columns=['Vehicles'])
@@ -114,7 +130,8 @@ y = df['Vehicles']
 
 models = {
     "Linear Regression": LinearRegression(),
-    "Decision Tree": DecisionTreeRegressor(random_state=42)
+    "Decision Tree": DecisionTreeRegressor(random_state=42),
+    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=42)
 }
 
 results = {}
@@ -181,7 +198,11 @@ plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
 
-from sklearn.linear_model import LinearRegression
+# Determine the best model based on MAE
+best_model_name = min(results, key=lambda k: abs(results[k]))
+print(f"Best model based on MAE: {best_model_name}")
+
+# Choose the best model for final training and prediction
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 
@@ -190,23 +211,29 @@ y = df['Vehicles']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-model = LinearRegression()
+# Use the best model
+if best_model_name == "Random Forest":
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+elif best_model_name == "Decision Tree":
+    model = DecisionTreeRegressor(random_state=42)
+else:
+    model = LinearRegression()
+
 model.fit(X_train, y_train)
 
 y_pred = model.predict(X_test)
 
 mae = mean_absolute_error(y_test, y_pred)
-print("Mean Absolute Error (MAE):", mae)
-
+print(f"Mean Absolute Error (MAE) for {best_model_name}: {mae}")
 
 plt.figure(figsize=(10, 6))
 plt.scatter(y_test, y_pred, alpha=0.5)
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
-plt.title('Linear Regression: Actual vs Predicted Values')
+plt.title(f'{best_model_name}: Actual vs Predicted Values')
 plt.xlabel('Actual Number of Vehicles')
 plt.ylabel('Predicted Number of Vehicles')
 plt.grid(True)
-plt.show()
+# plt.show()
 
 from sklearn.model_selection import cross_val_score
 
@@ -227,11 +254,18 @@ print(f"Mean Absolute Error: {mean_absolute_error(y, y_pred_all):.2f}")
 print(f"Mean Squared Error: {mean_squared_error(y, y_pred_all):.2f}")
 print(f"RMSE: {np.sqrt(mean_squared_error(y, y_pred_all)):.2f}")
 
+mae = mean_absolute_error(y, y_pred_all)
+y_range = y.max() - y.min()
+accuracy_range = (1 - (mae / y_range)) * 100
+print(f"Accuracy based on target range: {accuracy_range:.2f}%")
+
+
 from joblib import dump
 dump(model, 'traffic_model.pkl', protocol=4)
 
 df.columns
 
+# Interactive prediction loop
 while True:
     junction = int(input("Enter junction number (1, 2, 3 or 4): "))
     month = int(input("Enter month (1-12): "))
