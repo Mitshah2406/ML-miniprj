@@ -128,10 +128,12 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 X = df.drop(columns=['Vehicles'])
 y = df['Vehicles']
 
+
+# Used 30 DT for random forest
 models = {
     "Linear Regression": LinearRegression(),
     "Decision Tree": DecisionTreeRegressor(random_state=42),
-    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=42)
+    "Random Forest": RandomForestRegressor(n_estimators=30, random_state=42)
 }
 
 results = {}
